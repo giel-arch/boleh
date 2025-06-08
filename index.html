@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Questions</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                        url('https://i.pinimg.com/736x/cc/b6/0a/ccb60ac5f2ecab4351e491e59542fa6b.jpg');
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        @media screen and (min-width: 768px) {
+            body {
+                background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                            url('https://png.pngtree.com/background/20220721/original/pngtree-urban-rooftop-sky-photography-material-picture-image_1700468.jpg');
+                background-size: cover;
+                background-position: center;
+            }
+        }
+
+        .container {
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 80%;
+            border: 2px solid white;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .welcome-message {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            -webkit-text-stroke: 1px white;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .welcome-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .question {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            -webkit-text-stroke: 1px white;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .question.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .buttons.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        button {
+            padding: 0.5rem 2rem;
+            font-size: 1.2rem;
+            border: 2px solid white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: transparent;
+            color: white;
+            -webkit-text-stroke: 0.5px white;
+        }
+
+        .yes-btn {
+            background-color: rgba(76, 175, 80, 0.3);
+        }
+
+        .no-btn {
+            background-color: rgba(128, 128, 128, 0.3);
+            position: relative;
+        }
+
+        .no-btn.disabled {
+            cursor: not-allowed;
+        }
+
+        .yes-btn:hover {
+            background-color: rgba(76, 175, 80, 0.5);
+            transform: scale(1.05);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .watermark {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
+            -webkit-text-stroke: 0.5px white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="watermark">Dibuat Oleh Josia-Gavriel-Kelo</div>
+    <div class="container">
+        <div id="welcome1" class="welcome-message">Halo😘</div>
+        <div id="welcome2" class="welcome-message hidden">Jawab ini dulu dong😜😁</div>
+
+        <div id="question1" class="question-container hidden">
+            <div class="question">Aku CoGan ga?</div>
+            <div class="buttons">
+                <button class="yes-btn" onclick="nextQuestion(1)">Ya</button>
+            </div>
+        </div>
+
+        <div id="question2" class="question-container hidden">
+            <div class="question">Kamu suka aku ga?</div>
+            <div class="buttons">
+                <button class="yes-btn" onclick="nextQuestion(2)">Ya</button>
+                <button class="no-btn disabled">Tidak</button>
+            </div>
+        </div>
+
+        <div id="question3" class="question-container hidden">
+            <div class="question">Kamu mau ga jadi pacar aku?</div>
+            <div class="buttons">
+                <button class="yes-btn" onclick="showFinalMessage()">Ya</button>
+                <button class="no-btn" id="movingNoBtn" ontouchstart="moveButtonMobile(event)" onmouseover="moveButton()" onclick="handleNoClick(event)">Tidak</button>
+            </div>
+        </div>
+
+        <div id="finalMessage" class="question-container hidden">
+            <div class="question">❤️ Thank you! ❤️</div>
+            <div class="buttons" id="finalButtons" style="display: none;">
+                <button class="yes-btn" onclick="showRestartMessage()">Pencet aku!!</button>
+            </div>
+        </div>
+
+        <div id="restartMessage" class="question-container hidden">
+            <div class="question">Maafin yah telah nyusahin kamu selama ini❤ kalau kamu mau.. mau ga kita mulai ulang?😆💖</div>
+            <div class="input-container" style="margin-top: 20px;">
+                <input type="text" id="restartInput" placeholder="Ketik jawabanmu di sini..." 
+                       style="background: transparent; border: 2px solid white; color: white; padding: 10px; 
+                              border-radius: 5px; width: 80%; font-size: 1rem; outline: none;">
+            </div>
+        </div>
+
+        <div id="finalLoveMessage" class="question-container hidden">
+            <div class="question">Yayy. thankyou yah udah nerima dengan aku yang seadanya doang. Love You😍</div>
+        </div>
+
+        <div id="rejectionMessage" class="question-container hidden">
+            <div class="question">yah jadi ga mau? maaf yah😞</div>
+        </div>
+    </div>
+
+    <script>
+        // Show welcome messages with animation
+        setTimeout(() => {
+            document.getElementById('welcome1').classList.add('show');
+        }, 500);
+
+        setTimeout(() => {
+            document.getElementById('welcome1').classList.add('hidden');
+            document.getElementById('welcome2').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('welcome2').classList.add('show');
+            }, 100);
+        }, 3000);
+
+        setTimeout(() => {
+            document.getElementById('welcome2').classList.add('hidden');
+            document.getElementById('question1').classList.remove('hidden');
+            setTimeout(() => {
+                document.querySelector('#question1 .question').classList.add('show');
+                document.querySelector('#question1 .buttons').classList.add('show');
+            }, 100);
+        }, 6000);
+
+        function nextQuestion(currentQuestion) {
+            const currentContainer = document.getElementById(`question${currentQuestion}`);
+            const nextContainer = document.getElementById(`question${currentQuestion + 1}`);
+            
+            currentContainer.classList.add('hidden');
+            nextContainer.classList.remove('hidden');
+            
+            setTimeout(() => {
+                nextContainer.querySelector('.question').classList.add('show');
+                nextContainer.querySelector('.buttons').classList.add('show');
+            }, 100);
+        }
+
+        function showFinalMessage() {
+            const question3 = document.getElementById('question3');
+            const finalMessage = document.getElementById('finalMessage');
+            
+            question3.classList.add('hidden');
+            finalMessage.classList.remove('hidden');
+            
+            setTimeout(() => {
+                finalMessage.querySelector('.question').classList.add('show');
+                // Show the "Pencet aku!!" button after 3 seconds
+                setTimeout(() => {
+                    const finalButtons = document.getElementById('finalButtons');
+                    finalButtons.style.display = 'flex';
+                    finalButtons.classList.add('show');
+                }, 3000);
+            }, 100);
+        }
+
+        function showRestartMessage() {
+            const finalMessage = document.getElementById('finalMessage');
+            const restartMessage = document.getElementById('restartMessage');
+            
+            finalMessage.classList.add('hidden');
+            restartMessage.classList.remove('hidden');
+            
+            setTimeout(() => {
+                restartMessage.querySelector('.question').classList.add('show');
+                // Focus on input after 2 seconds
+                setTimeout(() => {
+                    const input = document.getElementById('restartInput');
+                    input.focus();
+                }, 2000);
+            }, 100);
+        }
+
+        // Add event listener for the input
+        document.getElementById('restartInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const input = this.value.toLowerCase();
+                if (input.includes('iya') || input.includes('ya') || input.includes('boleh') || 
+                    input.includes('oke') || input.includes('ok') || input.includes('yes')) {
+                    showFinalLoveMessage();
+                }
+            }
+        });
+
+        function showFinalLoveMessage() {
+            const restartMessage = document.getElementById('restartMessage');
+            const finalLoveMessage = document.getElementById('finalLoveMessage');
+            
+            restartMessage.classList.add('hidden');
+            finalLoveMessage.classList.remove('hidden');
+            
+            setTimeout(() => {
+                finalLoveMessage.querySelector('.question').classList.add('show');
+            }, 100);
+        }
+
+        function moveButtonMobile(event) {
+            // Prevent the click event from firing on mobile
+            event.preventDefault();
+            moveButton();
+        }
+
+        function handleNoClick(event) {
+            // Only show rejection message for desktop users
+            if (!hasTouch) {
+                event.preventDefault();
+                document.getElementById('question3').classList.add('hidden');
+                document.getElementById('rejectionMessage').classList.remove('hidden');
+                setTimeout(() => {
+                    document.querySelector('#rejectionMessage .question').classList.add('show');
+                }, 100);
+            }
+        }
+
+        function moveButton() {
+            const button = document.getElementById('movingNoBtn');
+            const container = document.querySelector('.container');
+            const buttonRect = button.getBoundingClientRect();
+            
+            // Convert 10cm to pixels (assuming 1cm = 37.8px)
+            const moveDistance = 37.8 * 10;
+            
+            // Get current position
+            const currentLeft = parseInt(button.style.left) || 0;
+            const currentTop = parseInt(button.style.top) || 0;
+            
+            // Calculate new position within 10cm range
+            const newX = currentLeft + (Math.random() * moveDistance - moveDistance/2);
+            const newY = currentTop + (Math.random() * moveDistance - moveDistance/2);
+            
+            // Ensure the button stays within container bounds
+            const maxX = container.clientWidth - buttonRect.width;
+            const maxY = container.clientHeight - buttonRect.height;
+            
+            // Apply new position with bounds checking
+            button.style.position = 'absolute';
+            button.style.left = `${Math.max(0, Math.min(maxX, newX))}px`;
+            button.style.top = `${Math.max(0, Math.min(maxY, newY))}px`;
+        }
+
+        const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        if (!hasTouch) {
+            const noBtn = document.getElementById('movingNoBtn');
+            noBtn.addEventListener('mouseover', moveButton);
+        }
+    </script>
+</body>
+</html> 
